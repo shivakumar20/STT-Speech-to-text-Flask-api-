@@ -5,26 +5,20 @@ import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report,confusion_matrix, accuracy_score
 from flask import Flask, jsonify, make_response, render_template, request, redirect, current_app, abort
-from flask_cors import CORS
 from sklearn.naive_bayes import MultinomialNB
 from collections import Counter
 import re
 from nltk.stem.porter import PorterStemmer
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfTransformer
-from sklearn.pipeline import Pipeline, FeatureUnion
-
+from sklearn.pipeline import Pipeline
 import queue
-
-import psycopg2
-
-import gc
 import sys
 import warnings
 warnings.filterwarnings('ignore')
 
 app = Flask(__name__)
-CORS(app)
+
 
 q = queue.Queue()
 
@@ -233,34 +227,6 @@ li = ["What is the duration of each program?",
 qnnoglobal = 0
 questionasked = ""
 
-#We here are not fetching from Data base
-def fetchqnno(qnno):
-    #connecting to data base
-    conn = psycopg2.connect( 
-        host = "localhost",
-        database = "humanoid",
-        user = "postgres",
-        password = "1234"
-    )
-    sql_select_Query = "SELECT QUESTION FROM TESING_VOICE"
-    #Creating a cursor object using the cursor() method
-    cursor = conn.cursor()
-
-    cursor.execute(sql_select_Query)
-
-    # get all records
-    records = cursor.fetchall()
-    print(f"printing row : {records[(qnno-1)][0]}")
-
-    questionasked = records[(qnno-1)][0]
-    
-
-    conn.commit()
-    conn.close()
-    global qnnoglobal
-    qnnoglobal = qnno
-
-    return questionasked
 
 
 #Here need to send the voice input result
